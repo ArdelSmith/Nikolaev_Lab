@@ -8,5 +8,6 @@ namespace Nikolaev_Lab
 {
     public class Task1
     {
+        int a = 10;
     }
 }
