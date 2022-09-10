@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Nikolaev_Lab
 {
-    internal class Task1
+    public class Task1
     {
     }
 }
