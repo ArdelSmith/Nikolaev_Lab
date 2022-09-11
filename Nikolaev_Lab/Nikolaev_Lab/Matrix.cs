@@ -47,7 +47,8 @@ namespace MatrixExperiment
     {
         static void Main()
         {
-            Launcher.StartSecondTask();
+            ///Launcher.StartSecondTask();
+            Project.Core.FileWriter bebra = new Project.Core.FileWriter();
         }
  
         public static double FindMiddleTime(List<double> allElems)
