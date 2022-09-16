@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using Project.Core;
+using Task_Three;
  
 namespace MatrixExperiment
 {
@@ -47,8 +49,11 @@ namespace MatrixExperiment
     {
         static void Main()
         {
-            ///Launcher.StartSecondTask();
-            Project.Core.FileWriter bebra = new Project.Core.FileWriter();
+            ///Launcher.StartSecondTask()
+            ///FileReader bebra = new FileReader();
+            ///Task_Number_One.Task5.StartBubbleSort();
+            IEratosfen b = new IEratosfen();
+            b.IErat(10000001);
         }
  
         public static double FindMiddleTime(List<double> allElems)
@@ -74,7 +79,7 @@ namespace MatrixExperiment
                         for (int j = 0; j <= i; j++)
                             selectedElems.Add(allElems[j]);
  
-                    foreach (double elem in selectedElems) sumTime += elem;
+                    foreach (double elem in selectedElems) sumTime += elem; 
                     return sumTime / selectedElems.Count;
                 }
                 else if (nextDist > curDist * 5)
@@ -142,8 +147,6 @@ namespace MatrixExperiment
         {
             string path = Path.Combine(Environment.CurrentDirectory, "OutputedData.csv");
             string line = $"{n};{time / 10.0}\n";
- 
- 
             File.AppendAllText(path, line);
         }
     }
