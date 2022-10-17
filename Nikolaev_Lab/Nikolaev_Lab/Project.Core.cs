@@ -18,13 +18,19 @@ namespace Project.Core
     {
         public FileWriter()
         {
-            if (!File.Exists(DataBase.FileName + DataBase.FileExtension)) File.WriteAllText(DataBase.FileName + DataBase.FileExtension,
-                ArrayGenerator.GenerateArray(ArrayGenerator.GenerateArray()));
+            if (File.Exists(DataBase.FileName + DataBase.FileExtension))
+            {
+            }
             else
             {
-                string data = File.ReadAllText(DataBase.FileName + DataBase.FileExtension);
-                File.WriteAllText(DataBase.FileName + DataBase.FileExtension,data + "\n" +
-                ArrayGenerator.GenerateArray(ArrayGenerator.GenerateArray(15, 40440)));
+                File.WriteAllText(DataBase.FileName + DataBase.FileExtension, ArrayGenerator.GenerateStringArray(1, 100));
+                File.AppendAllText(DataBase.FileName + DataBase.FileExtension, " ");
+                for (int i = 0; i < 1000000; i++)
+                {
+                    File.AppendAllText(DataBase.FileName + DataBase.FileExtension, ArrayGenerator.GenerateStringArray(1, 100));
+                    File.AppendAllText(DataBase.FileName + DataBase.FileExtension, " ");
+                }
+                File.AppendAllText(DataBase.FileName + DataBase.FileExtension, ArrayGenerator.GenerateStringArray(1, 100));
             }
         }
     }
@@ -36,7 +42,18 @@ namespace Project.Core
             else
             {
                 DataBase.RawData = File.ReadAllLines(DataBase.FileName + DataBase.FileExtension);
-                ///DataBase.Data = 
+                List <int[]> final = new List <int[]>();
+                foreach (string line in DataBase.RawData)
+                {
+                    string[] raw = line.Split(' ');
+                    int[] arr = new int[raw.Length];
+                    for (int i = 0; i < raw.Length; i++)
+                    {
+                        arr[i] = int.Parse(raw[i]);
+                    }
+                    final.Add(arr);
+                }
+                DataBase.Data = final;
             }
         }
     }

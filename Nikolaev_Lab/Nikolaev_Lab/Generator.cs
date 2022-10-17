@@ -20,25 +20,31 @@ namespace Generator
             }    
             return array;
         }
+        public static string GenerateStringArray(int length, int maxElem)
+        {
+            string res = "";
+            Random rnd = new Random();
+            res += rnd.Next(1, maxElem).ToString();
+            return res;
+        }
         /// <summary>
         /// Возвращает данные в виде строки, готовой для записи в файл
         /// </summary>
         /// <param name="arr"></param>
         /// <returns></returns>
-        public static string GenerateArray(int[] arr)
+        public static string ArrayToString(int[] arr)
         {
-            string result = "";
-            for (int i = 0; i < arr.Length; i++)
+            List<string> list = new List<string>();
+            for (int i = 0; i < arr.Length - 1; i++)
             {
-                if (i != arr.Length - 1)
-                {
-                    result += arr[i];
-                    result += " ";
-                }
-                else result += arr[i];
+                list.Add(arr[i].ToString());
+                list.Add(" ");
             }
+            list.Add(arr[arr.Length-1].ToString());
+            list.Add("\n");
+            string result = "";
+            foreach (string item in list) result += item;
             return result;
-
         }
     }
 }
