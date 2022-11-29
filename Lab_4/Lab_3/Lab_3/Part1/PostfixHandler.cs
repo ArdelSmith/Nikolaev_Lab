@@ -3,120 +3,58 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Project.Core.Operations;
 
 namespace Lab_3.Part1
 {
-    public static class PostfixHandler
+    public abstract class Operation : IComparable<Operation>
     {
-        public static void InfixToPostfixStandart(string data)
+        public abstract string Name { get; }
+        public abstract int Priority { get; }
+        public abstract bool hasTwoOperands { get; }
+        public abstract double Calculate(double left, double? right = null);
+
+        /// <returns>Если операндов 2 - true, иначе - false</returns>
+        public bool Check(double left, double? right = null)
         {
-            string[] infix = data.Split(' ');
-            int n = 0;
-            bool flag = true;
-            string postfix = "";
-            Stack<string> nums = new Stack<string>();
-            Stack<string> ops = new Stack<string>();
-            foreach (string s in infix)
-            {
-                if (n == 2 && flag)
-                {
-                    string second = nums.Last();
-                    nums.Pop();
-                    string first = nums.Last();
-                    nums.Pop();
-                    postfix += first.ToString() + " " + second.ToString() + " " + ops.Last();
-                    ops.Pop();
-                    nums.Push(postfix);
-                    n = 1;
-                    flag = false;
-                }
-                else if (n == 2 && !flag)
-                {
-                    string first = nums.Last();
-                    nums.Pop();
-                    postfix += " " + first.ToString() + " " + ops.Last();
-                    ops.Pop();
-                    nums.Push(postfix);
-                    n = 1;
-                }
-                try
-                {
-                    double e = double.Parse(s);
-                    nums.Push(e.ToString());
-                    n += 1;
-                }
-                catch
-                {
-                    ops.Push(s);
-                }
-            }
-            if (ops.Count != 0)
-            {
-                string sec = nums.Last();
-                nums.Pop();
-                string f = nums.Last();
-                Console.WriteLine(f + " " + sec + " " + ops.Last());
-            }
-            else
-            {
-                Console.WriteLine(nums.Last());
-            }
-        }
-        public static void InfixToPostfix(string data)
-        {
-            string[] infix = data.Split(' ');
-            int n = 0;
-            bool flag = true;
-            string postfix = "";
-            MyStack<string> nums = new MyStack<string>();
-            MyStack<string> ops = new MyStack<string>();
-            foreach (string s in infix)
-            {
-                if (n == 2 && flag)
-                {
-                    string second = nums.Top();
-                    nums.Pop();
-                    string first = nums.Top();
-                    nums.Pop();
-                    postfix += first.ToString() + " " + second.ToString() + " " + ops.Top();
-                    ops.Pop();
-                    nums.Push(postfix);
-                    n = 1;
-                    flag = false;
-                }
-                else if (n == 2 && !flag)
-                {
-                    string first = nums.Top();
-                    nums.Pop();
-                    postfix += " " + first.ToString() + " "  + ops.Top();
-                    ops.Pop();
-                    nums.Push(postfix);
-                    n = 1;
-                }
-                try
-                {
-                    double e = double.Parse(s);
-                    nums.Push(e.ToString());
-                    n += 1;
-                }
-                catch 
-                {
-                    ops.Push(s);
-                }
-            }
-            if (!ops.IsEmpty())
-            {
-                string sec = nums.Top();
-                nums.Pop();
-                string f = nums.Top();
-                Console.WriteLine(f + " " + sec + " " + ops.Top());
-            }
-            else
-            {
-                Console.WriteLine(nums.Top());
-            }
+            return right is not null;
         }
 
+        public int CompareTo(Operation? other)
+        {
+            if (other is null) throw new ArgumentNullException(nameof(other));
+
+            return Priority.CompareTo(other.Priority);
+        }
+    }
+    public class OperationsRepo
+    {
+        private List<Operation> operations { get; set; }
+
+        public OperationsRepo()
+        {
+            operations = new List<Operation>()
+            {
+                new Addition(),
+                new Cosinus(),
+                new Division(),
+                new Exponentiation(),
+                new Multiplication(),
+                new NaturalLogarithm(),
+                new Sinus(),
+                new Sqrt(),
+                new Subtraction()
+            };
+        }
+
+        public List<Operation> GetOperations()
+        {
+            return operations.ToList();
+        }
+    }
+    public static class PostfixHandler
+    {
+       
         public static double ProcessOperation(string operation, MyStack<double> stack)
         {
             switch (operation)
@@ -224,6 +162,7 @@ namespace Lab_3.Part1
 
         public static string InfixToPostfix(string[] strSplit, OperationsRepo operationsRepo)
         {
+
             MyStack<string> stack = new MyStack<string>();
             List<Operation> operations = operationsRepo.GetOperations();
 
@@ -241,8 +180,7 @@ namespace Lab_3.Part1
                 else if (strSplit[i].Equals(")"))
                 {
                     while (stack.Count() != 0 && !stack.Top().Equals("("))
-                        sb.Append($"{stack.Top()} ");
-                    stack.Pop();
+                        sb.Append($"{stack.Pop()} ");
                     stack.Pop();
                 }
                 else
@@ -258,14 +196,17 @@ namespace Lab_3.Part1
                     }
                     stack.Push(op.Name);
                 }
+
             }
 
             while (stack.Count() != 0)
             {
-                sb.Append($"{stack.Pop()}");
+                sb.Append($"{stack.Pop()} ");
             }
 
+            Console.WriteLine(sb.ToString()); 
             return sb.ToString();
-        }
+        } 
+    
     }
 }

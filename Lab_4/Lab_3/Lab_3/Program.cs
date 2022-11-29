@@ -9,36 +9,16 @@ namespace Lab_3
     {
         public static void Main()
         {
-            MyStack<int> stack = new MyStack<int>();
-            stack.Push(1);
-            stack.Print();
-            Console.WriteLine(stack.Top());
-            stack.Pop();
-            stack.Print();
+            Menu menu = new Menu();
+            menu.StartMenu();
+            //MyStack<int> stack = new MyStack<int>();
+            //stack.Push(1);
+            //stack.Print();
+            //Console.WriteLine(stack.Top());
+            //stack.Pop();
+            //stack.Print();
             //Lab_3.Part3.StackTask.ReverseNumber(156);
-            //for (int i = 0; i < 1000; i++)
-            //{
-            //    FileWriter.WriteData(Environment.CurrentDirectory + "/inputPart2.csv", DataWorker.Generate(5, 1000));
-            //}
-            //string[] rawData = File.ReadAllLines(Environment.CurrentDirectory + "/inputPart2.csv");
-            //int i = 0;
-            //foreach (string s in rawData)
-            //{
-            //    string[] data = rawData[i].Split(' '); 
-            //    Stopwatch timer = new Stopwatch();
-            //    Stopwatch timer1 = new Stopwatch();
-            //    timer.Start();
-            //    Queue.QueueExperinment.StartExpMyQueue(DataWorker.Generate(5, 1000));
-            //    timer.Stop();
-            //    long m1 = Process.GetCurrentProcess().WorkingSet64;
-            //    timer1.Start();
-            //    Queue.QueueExperinment.StartExpClassicQueue(DataWorker.Generate(5, 1000));
-            //    timer1.Stop();
-            //    long m2 = Process.GetCurrentProcess().WorkingSet64;
-            //    FileWriter.WriteData(Environment.CurrentDirectory + "/punkt2_my.csv", timer.ElapsedMilliseconds, m1);
-            //    FileWriter.WriteData(Environment.CurrentDirectory + "/punkt2_.csv", timer1.ElapsedMilliseconds, m2);
-            //    i += 1;
-            //}
+            //Queue.QueueExperinment.StartExperiment();
             //string rawData = File.ReadAllText(Environment.CurrentDirectory + "/input.csv");
             //string[] data = rawData.Split(' ');
             //for (int i = 1; i < data.Length / 100; i += 100)
@@ -56,7 +36,7 @@ namespace Lab_3
             //    timer.Stop();
             //    FileWriter.WriteData(Environment.CurrentDirectory + "/infixtimeStandart.csv", i, timer.ElapsedMilliseconds);
             //}
-            //Queue.QueueExperinment.StartExpMyQueue(File.ReadAllText(Environment.CurrentDirectory + "/commands.txt"));
+            //Queue.QueueExperinment.StartExperiment();
             //Queue.QueueExperinment.StartExpClassicQueue(File.ReadAllText(Environment.CurrentDirectory + "/commands.txt"));
             //string rawData = File.ReadAllText(Environment.CurrentDirectory + "/commands.txt");
             //string[] data = rawData.Split(' ');
@@ -92,6 +72,22 @@ namespace Lab_3
             //string infix = "2 + 2 + 4";
             //Task4Executor.ExecuteTask4(Environment.CurrentDirectory + "/postfix.txt");
             //Lab_3.Part3.StackTask.FindDelims(48);
+            //string[][] different = new string[100][];
+            //string[][] same = new string[100][];
+            //for (int i = 0; i < different.Length; i++)
+            //{
+            //    string temp = DataWorker.Generate(5, i * 1000);
+            //    string[] t = temp.Split(" ");
+            //    different[i] = t;
+            //}
+            //for (int i = 0; i < same.Length; i++)
+            //{
+            //    string temp = DataWorker.Generate(5, 1000);
+            //    string[] t = temp.Split(" ");
+            //    same[i] = t;
+            //}
+            //Queue.QueueExperinment.StartExperiment(different, true);
+            //Queue.QueueExperinment.StartExperiment(same, false);
         }
     }
 }

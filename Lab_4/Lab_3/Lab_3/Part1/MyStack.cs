@@ -18,7 +18,7 @@ namespace Lab_3.Part1
         }
         public int Count()
         {
-            if (top > 0) return top++;
+            if (top >= 0) return (top + 1);
             else return 0;
         }
         public void Push(T elem)
@@ -30,12 +30,13 @@ namespace Lab_3.Part1
         {
             return st.Count == 0;
         }
-        public void Pop()
+        public T Pop()
         {
             if (!IsEmpty())
             {
                 MyList<T> list = new MyList<T>();
                 int count = 0;
+                T temp = st.Last();
                 foreach (T elem in st)
                 {
                     if (count < top)
@@ -43,10 +44,12 @@ namespace Lab_3.Part1
                         list.Add(elem);
                         count++;
                     }
-                    else break;
+                    else {
+                        st = list;
+                        top -= 1;
+                    }
                 }
-                st = list;
-                
+                return temp;
             }
             else throw new Exception("Stack is already empty!");
         }
@@ -54,12 +57,7 @@ namespace Lab_3.Part1
         {
             if (!IsEmpty())
             {
-                List<T> list = new List<T>();
-                foreach (T elem in st)
-                {
-                    list.Add(elem);   
-                }
-                return list.Last();
+                return st.Last();
             }
             else throw new Exception("Stack has no elements!");
         }
@@ -95,12 +93,12 @@ namespace Lab_3.Part1
                                 try
                                 {
                                     stack.Pop();
-                                    Console.WriteLine("Last element in stack has been deleted!");
+                                    //Console.WriteLine("Last element in stack has been deleted!");
                                     break;
                                 }
                                 catch
                                 {
-                                    Console.WriteLine("Stack has no elements to delete!");
+                                    //Console.WriteLine("Stack has no elements to delete!");
                                     break;
                                 }
                             }
@@ -108,12 +106,12 @@ namespace Lab_3.Part1
                             {
                                 try
                                 {
-                                    Console.WriteLine(stack.Top());
+                                    //Console.WriteLine(stack.Top());
                                     break;
                                 }
                                 catch
                                 {
-                                    Console.WriteLine("Stack has no elements!");
+                                    //Console.WriteLine("Stack has no elements!");
                                     break;
                                 }
                             }
@@ -121,7 +119,7 @@ namespace Lab_3.Part1
                             {
                                 try
                                 {
-                                    Console.WriteLine(stack.IsEmpty());
+                                    //Console.WriteLine(stack.IsEmpty());
                                     break;
                                 }
                                 catch
@@ -133,7 +131,7 @@ namespace Lab_3.Part1
                             {
                                 try
                                 {
-                                    stack.Print();
+                                    //stack.Print();
                                     break;
                                 }
                                 catch
@@ -165,12 +163,12 @@ namespace Lab_3.Part1
                                 try
                                 {
                                     stack.Pop();
-                                    Console.WriteLine("Last element in stack has been deleted!");
+                                    //Console.WriteLine("Last element in stack has been deleted!");
                                     break;
                                 }
                                 catch
                                 {
-                                    Console.WriteLine("Stack has no elements to delete!");
+                                    //Console.WriteLine("Stack has no elements to delete!");
                                     break;
                                 }
                             }
@@ -178,13 +176,13 @@ namespace Lab_3.Part1
                             {
                                 try
                                 {
-                                    Console.WriteLine(stack.Last());
+                                    //Console.WriteLine(stack.Last());
                                     stack.Pop();
                                     break;
                                 }
                                 catch
                                 {
-                                    Console.WriteLine("Stack has no elements!");
+                                    //Console.WriteLine("Stack has no elements!");
                                     break;
                                 }
                             }
@@ -192,7 +190,7 @@ namespace Lab_3.Part1
                             {
                                 try
                                 {
-                                    Console.WriteLine(stack.Count > 0);
+                                    //Console.WriteLine(stack.Count > 0);
                                     break;
                                 }
                                 catch
@@ -204,7 +202,7 @@ namespace Lab_3.Part1
                             {
                                 try
                                 {
-                                    Console.WriteLine(stack);
+                                    //Console.WriteLine(stack);
                                     break;
                                 }
                                 catch

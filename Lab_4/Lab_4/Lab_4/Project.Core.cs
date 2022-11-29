@@ -13,5 +13,16 @@ namespace Lab_4
         {
             File.WriteAllLines(path + "/" + fileName, data);
         }
+        public static void WriteFile(string data, string fileName)
+        {
+            if (!File.Exists(fileName))
+            {
+                File.WriteAllText(fileName, data);
+            }
+            else
+            {
+                File.AppendAllText(fileName, data);
+            }
+        }
     }
 }

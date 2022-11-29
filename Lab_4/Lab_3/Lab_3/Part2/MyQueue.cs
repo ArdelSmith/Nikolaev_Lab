@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics;
+using Lab_3.Part4;
 
 namespace Queue
 {
@@ -18,6 +19,20 @@ namespace Queue
             MemorryElems.Add((elem.Length + 1) * 2);
         }
 
+        public void Add(object elem)
+        {
+            try
+            {
+                int num = (int)elem;
+                Add(num);
+            }
+            catch
+            {
+                string str = (string)elem;
+                Add(str);
+            }
+        }
+
         public int GetMemory()
         {
             return MemorryElems.Sum();
@@ -29,9 +44,9 @@ namespace Queue
         }
     }
 
-    public class Queue
+    public class Queue<T>
     {
-        private List<object> Elems = new List<object>();
+        private List<T> Elems = new List<T>();
         private MemoryKeeper Keeper = new MemoryKeeper();
 
         public bool IsEmpty()
@@ -39,35 +54,24 @@ namespace Queue
             return (Elems.Count == 0);
         }
 
-        public void Enqueue(string elem)
+        public void Enqueue(T elem)
         {
             Elems.Add(elem);
             Keeper.Add(elem);
         }
 
-        public void Enqueue(int elem)
+        public T Dequeue()
         {
-            Elems.Add(elem);
-            Keeper.Add(elem);
+            T result = Elems[0];
+            Elems.RemoveAt(0);
+
+            Keeper.Remove();
+            return result;
         }
 
-        public object Dequeue()
+        public T Peek()
         {
-            if (!IsEmpty())
-            {
-                object result = Elems[0];
-                Elems.RemoveAt(0);
-
-                Keeper.Remove();
-                return result;
-            }
-            else return new object();
-        }
-
-        public object Peek()
-        {
-            if (!IsEmpty()) return Elems[0];
-            else return new object();
+            return Elems[0];
         }
 
         public int GetTotalMemory()
@@ -81,54 +85,44 @@ namespace Queue
         }
     }
 
-    public static class ListExtensionMethods
+    public class MyQueue<T>
     {
-        private static MemoryKeeper Keeper = new MemoryKeeper();
+        private MyList<T> Elems = new MyList<T>();
+        private MemoryKeeper Keeper = new MemoryKeeper();
 
-        public static bool IsEmpty(this List<object> list)
+        public bool IsEmpty()
         {
-            return (list.Count == 0);
+            return (Elems.Count == 0);
         }
 
-        public static void Enqueue(this List<object> list, string elem)
+        public void Enqueue(T elem)
         {
-            list.Add(elem);
+            Elems.Add(elem);
             Keeper.Add(elem);
         }
 
-        public static void Enqueue(this List<object> list, int elem)
+        public T Dequeue()
         {
-            list.Add(elem);
-            Keeper.Add(elem);
+            T result = Elems.GetFirstElem();
+            Elems.Remove(result);
+
+            Keeper.Remove();
+            return result;
         }
 
-        public static object Dequeue(this List<object> list)
+        public T Peek()
         {
-            if (!list.IsEmpty())
-            {
-                object result = list[0];
-                list.RemoveAt(0);
-
-                Keeper.Remove();
-                return result;
-            }
-            else return new object();
+            return Elems.GetFirstElem();
         }
 
-        public static object Peek(this List<object> list)
-        {
-            if (!list.IsEmpty()) return list[0];
-            else return new object();
-        }
-
-        public static int GetTotalMemory(this List<object> list)
+        public int GetTotalMemory()
         {
             return Keeper.GetMemory();
         }
 
-        public static void Print(this List<object> list)
+        public void Print()
         {
-            if (!list.IsEmpty()) Console.WriteLine(list[0]);
+            if (!IsEmpty()) Console.WriteLine(Elems.GetFirstElem());
         }
     }
 
@@ -136,10 +130,8 @@ namespace Queue
     {
         //static void Main()
         //{
-        //    //QueueExperinment.StartExperiment();
-        //    //QueueTask.SolveTask();
-        //    //QueueExperinment.StartExpMyQueue(File.ReadAllText(Environment.CurrentDirectory + "/commands.txt"));
-        //    //QueueExperinment.StartExpClassicQueue(File.ReadAllText(Environment.CurrentDirectory + "/commands.txt"));
+        //    QueueExperinment.StartExperiment();
+        //    QueueTask.SolveTask();
         //}
     }
 
@@ -148,7 +140,7 @@ namespace Queue
         public static void SolveTask()
         {
             Console.Clear();
-            Queue queue = new Queue();
+            MyQueue<int> queue = new MyQueue<int>();
             Random rnd = new Random();
 
             int[] numbers = FileReader.ReadNumbers();
@@ -157,8 +149,8 @@ namespace Queue
             foreach (int number in numbers)
                 queue.Enqueue(number);
 
-            Queue less = new Queue();
-            Queue more = new Queue();
+            MyQueue<int> less = new MyQueue<int>();
+            MyQueue<int> more = new MyQueue<int>();
 
             while (!queue.IsEmpty())
             {
@@ -172,7 +164,7 @@ namespace Queue
             PrintQueue(more);
         }
 
-        private static void PrintQueue(Queue queue)
+        private static void PrintQueue(MyQueue<int> queue)
         {
             while (!queue.IsEmpty())
             {
@@ -207,149 +199,68 @@ namespace Queue
         public static List<double> QueueListTimes = new List<double>();
         public static List<double> QueueTimes = new List<double>();
         public static List<int> CommandNumberList = new List<int>();
+        public static List<long> QueueListMemory = new List<long>();
+        public static List<long> QueueMemory = new List<long>();
+        public static void StartExperiment(string[][] data, bool flag)
+        {
+            StartMyQueueExperiment(data);
+            StartQueueExperimnt(data);
+            FileWriter.WriteData(CommandNumberList, QueueListTimes, QueueTimes, QueueListMemory, QueueMemory);
+            if (flag)
+            {
+                string path = Path.Combine(Environment.CurrentDirectory, "output_different.csv");
+                string[] lines = new string[QueueTimes.Count];
+                for (int i = 0; i < lines.Length - 1; i++)
+                {
+                    lines[i] = $"{QueueListTimes[i]};{QueueTimes[i]};{QueueListMemory[i]}; {QueueMemory[i]}";
+                }
 
+                File.WriteAllLines(path, lines);
+            }
+        }
         public static void StartExperiment()
         {
-            string[][] data = FileReader.ReadCommands();
+            string[][] data = FileReader.ReadCommands(File.ReadAllText(Environment.CurrentDirectory + "/commands.txt"));
 
             FillCommandNumberList(data);
-            StartListQueueExperiment(data);
+            StartMyQueueExperiment(data);
             StartQueueExperimnt(data);
-
-            FileWriter.WriteData(CommandNumberList, QueueListTimes, QueueTimes);
+            FileWriter.WriteData(CommandNumberList, QueueListTimes, QueueTimes, QueueListMemory, QueueMemory);
         }
 
         private static void FillCommandNumberList(string[][] data)
         {
-            for (int i = 0; i < data.Length; i++)
+            for (int i = 1; i < data.Length - 1; i++)
                 CommandNumberList.Add(data[i].Length);
         }
-        public static void StartExpClassicQueue(string data)
+
+        private static void StartMyQueueExperiment(string[][] data)
         {
-            string[] d = data.Split(' ');
-                List<long> timeList = new List<long>();
-                for (int repeat = 0; repeat < 5; repeat++)
-                {
-                    Queue<object> q = new Queue<object>();
-                    Stopwatch timer = new Stopwatch();
-                    timer.Start();
-
-                    for (int j = 0; j < d.Length - 1; j++)
-                    {
-                        switch (d[j])
-                        {
-                            case DequeueId:
-                                if (q.Count > 0) q.Dequeue();
-                                else Console.WriteLine("Queue is empty!");
-                                break;
-
-                            case PeekId:
-                                if (q.Count > 0) q.Peek();
-                                else Console.WriteLine("Queue is empty!");
-                                break;
-
-                            case IsEmptyId:
-                                if (q.Count > 0)
-                                {
-                                    Console.WriteLine(true);
-                                }
-                                else
-                                {
-                                    Console.WriteLine(false);
-                                }
-                                break;
-
-                            case PrintId:
-                                Console.WriteLine(q);
-                                break;
-
-                            default:
-                                string[] parts = d[j].Split(',');
-                                string str = parts[1];
-
-                                if (HelpMethods.IsParsePossible(str))
-                                    q.Enqueue(int.Parse(str));
-                                else
-                                    q.Enqueue(str);
-                                break;
-                        }
-                    }
-                    timer.Stop();
-                    timeList.Add(timer.ElapsedTicks);
-                }
-                double time = HelpMethods.FindMiddleTime(timeList);
-                //FileWriter.WriteData(k, time, Process.GetCurrentProcess().WorkingSet64, Environment.CurrentDirectory + "/classicqueue_2.csv");
-        }
-        public static void StartExpMyQueue(string data)
-        {
-                string[] d = data.Split(' ');
-                List<long> timeList = new List<long>();
-                for (int repeat = 0; repeat < 5; repeat++)
-                {
-                    List<object> queue = new List<object>();
-                    Stopwatch timer = new Stopwatch();
-                    timer.Start();
-
-                    for (int j = 0; j < d.Length - 1; j++)
-                    {
-                        switch (d[j])
-                        {
-                            case DequeueId:
-                                queue.Dequeue();
-                                break;
-
-                            case PeekId:
-                                queue.Peek();
-                                break;
-
-                            case IsEmptyId:
-                                queue.IsEmpty();
-                                break;
-
-                            case PrintId:
-                                queue.Print();
-                                break;
-
-                            default:
-                                string[] parts = d[j].Split(',');
-                                string str = parts[1];
-
-                                if (HelpMethods.IsParsePossible(str))
-                                    queue.Enqueue(int.Parse(str));
-                                else
-                                    queue.Enqueue(str);
-                                break;
-                        }
-                    }
-                    timer.Stop();
-                    timeList.Add(timer.ElapsedTicks);
-                }
-                double time = HelpMethods.FindMiddleTime(timeList);
-                //FileWriter.WriteData(k, time, Process.GetCurrentProcess().WorkingSet64, Environment.CurrentDirectory + "/queue_2.csv");
-        }
-        private static void StartListQueueExperiment(string[][] data)
-        {
-            for (int i = 0; i < data.Length; i++)
+            for (int i = 0; i < data.Length - 1; i += 1)
             {
                 List<long> timeList = new List<long>();
                 for (int repeat = 0; repeat < 5; repeat++)
                 {
-                    List<object> queue = new List<object>();
+                    MyQueue<object> queue = new MyQueue<object>();
                     string[] line = data[i];
 
                     Stopwatch timer = new Stopwatch();
                     timer.Start();
 
-                    for (int j = 0; j < data[i].Length; j++)
+                    for (int j = 0; j < data[i].Length - 1; j++)
                     {
                         switch (line[j])
                         {
+                            case "1":
+                                {
+                                    break;
+                                }
                             case DequeueId:
-                                queue.Dequeue();
+                                if (!queue.IsEmpty()) queue.Dequeue();
                                 break;
 
                             case PeekId:
-                                queue.Peek();
+                                if (!queue.IsEmpty()) queue.Peek();
                                 break;
 
                             case IsEmptyId:
@@ -376,32 +287,33 @@ namespace Queue
                 }
                 double time = HelpMethods.FindMiddleTime(timeList);
                 QueueListTimes.Add(time);
+                QueueListMemory.Add(Process.GetCurrentProcess().WorkingSet64);
             }
         }
 
         private static void StartQueueExperimnt(string[][] data)
         {
-            for (int i = 0; i < data.Length; i++)
+            for (int i = 0; i < data.Length - 1; i += 1)
             {
                 List<long> timeList = new List<long>();
                 for (int repeat = 0; repeat < 5; repeat++)
                 {
-                    Queue queue = new Queue();
+                    Queue<object> queue = new Queue<object>();
                     string[] line = data[i];
 
                     Stopwatch timer = new Stopwatch();
                     timer.Start();
 
-                    for (int j = 0; j < data[i].Length; j++)
+                    for (int j = 0; j < data[i].Length - 1; j++)
                     {
                         switch (line[j])
                         {
                             case DequeueId:
-                                queue.Dequeue();
+                                if (!queue.IsEmpty()) queue.Dequeue();
                                 break;
 
                             case PeekId:
-                                queue.Peek();
+                                if (!queue.IsEmpty()) queue.Peek();
                                 break;
 
                             case IsEmptyId:
@@ -428,6 +340,7 @@ namespace Queue
                 }
                 double time = HelpMethods.FindMiddleTime(timeList);
                 QueueTimes.Add(time);
+                QueueMemory.Add(Process.GetCurrentProcess().WorkingSet64);
             }
         }
     }
@@ -491,9 +404,34 @@ namespace Queue
 
     public static class FileReader
     {
-        public static string[][] ReadCommands()
+        public static string[][] ReadCommands(string commands)
         {
             string path = Path.Combine(Environment.CurrentDirectory, "commands.txt");
+            string line = File.ReadAllText(path);
+            int thousands = 1000 * 2;
+            string[][] data = new string[150][];
+            string temp = "";
+            int j = 0;
+            for (int i = 0; i < 300000; i++)
+            {
+                temp += line[i];
+                if (i == thousands)
+                {   
+                    string[] coms = temp.Split(" ");
+                    if (coms[coms.Length - 1].ToString() == "")
+                    {
+                        coms[coms.Length - 1] = "5";
+                    }
+                    data[j] = coms;
+                    j++;
+                    thousands += 2000;
+                }
+            }
+            return data;
+        }
+        public static string[][] ReadCommands()
+        {
+            string path = Path.Combine(Environment.CurrentDirectory, "input.txt");
             string[] lines = File.ReadAllLines(path);
 
 
@@ -523,25 +461,14 @@ namespace Queue
 
     public static class FileWriter
     {
-        public static void WriteData(int i, double time, long memory, string path)
-        {
-            if (!File.Exists(path))
-            {
-                File.WriteAllText(path, $"{i};{time};{memory}\n");
-            }
-            else
-            {
-                File.AppendAllText(path, $"{i};{time};{memory}\n");
-            }
-        }
-        public static void WriteData(List<int> commands, List<double> queueListTimes, List<double> queueTimes)
+        public static void WriteData(List<int> commands, List<double> myQueueTimes, List<double> queueTimes, List<long> MyQueueMemory, List<long> QueueMemory)
         {
             string path = Path.Combine(Environment.CurrentDirectory, "output.csv");
             string[] lines = new string[queueTimes.Count];
 
-            for (int i = 0; i < lines.Length; i++)
+            for (int i = 0; i < lines.Length - 1; i++)
             {
-                lines[i] = $"{commands[i]};{queueListTimes[i]};{queueTimes[i]}";
+                lines[i] = $"{myQueueTimes[i]};{queueTimes[i]};{MyQueueMemory[i]}; {QueueMemory[i]}";
             }
 
             File.WriteAllLines(path, lines);
